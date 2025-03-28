@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+    Generator: "former2"
+Description: ""
+Resources:
+    AmplifyApp:
+        Type: "AWS::Amplify::App"
+        Properties:
+            Name: "roadsideunit"
+            EnvironmentVariables: 
+              - 
+                Name: "_LIVE_PACKAGE_UPDATES"
+                Value: "[{\"pkg\":\"@aws-amplify/cli\",\"type\":\"npm\",\"version\":\"latest\"}]"
+            EnableBranchAutoDeletion: false
+            AccessToken: "REPLACEME"
+            OauthToken: "REPLACEME"
+            CustomHeaders: ""
+

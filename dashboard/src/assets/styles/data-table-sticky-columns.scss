@@ -1,0 +1,27 @@
+:deep(.v-data-table) {
+  th {
+    &:nth-child(2) {
+      position: sticky !important;
+      left: 140px;
+      z-index: 1;
+    }
+  }
+  tr {
+    &:nth-child(odd) {
+      td:nth-child(2) {
+        background: rgb(var(--v-theme-oddRow));
+      }
+    }
+    td {
+      &:first-child {
+        width: 150px;
+      }
+      &:nth-child(2) {
+        position: sticky !important;
+        left: 140px;
+        z-index: 1;
+        background: rgb(var(--v-theme-evenRow)); 
+      }
+    }
+  }
+}

@@ -1,0 +1,1432 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+    Generator: "former2"
+Description: ""
+Resources:
+    ApiGatewayRestApi:
+        Type: "AWS::ApiGateway::RestApi"
+        Properties:
+            Name: "roadsideunit-admin-api"
+            ApiKeySourceType: "HEADER"
+            EndpointConfiguration: 
+                Types: 
+                  - "REGIONAL"
+
+    ApiGatewayRestApi2:
+        Type: "AWS::ApiGateway::RestApi"
+        Properties:
+            Name: "roadsideunit-api"
+            ApiKeySourceType: "AUTHORIZER"
+            EndpointConfiguration: 
+                Types: 
+                  - "PRIVATE"
+
+    ApiGatewayStage:
+        Type: "AWS::ApiGateway::Stage"
+        Properties:
+            StageName: "prod"
+            DeploymentId: "j3k8cu"
+            RestApiId: !Ref ApiGatewayRestApi
+            CacheClusterEnabled: false
+            CacheClusterSize: "0.5"
+            Variables: 
+                alias: "prod"
+            TracingEnabled: false
+
+    ApiGatewayResource:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "useCaseInfo"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource2:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "signalInfo"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource3:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "roadsideUnitInfo"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource4:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "aliveMonitoringInfo"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource5:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "communicationMediaInfo"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource6:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "serviceLocationInfo"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource7:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: !Sub "exportCsv${ApiGatewayModel10}"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource8:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "sensorInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayResource9:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "signalInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayResource10:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "communicationMediaInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayResource11:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "aliveMonitoringInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayResource12:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "useCaseInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayResource13:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "serviceLocationInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayResource14:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "targetInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayResource15:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            PathPart: "roadsideUnitInfo"
+            ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+
+    ApiGatewayAuthorizer:
+        Type: "AWS::ApiGateway::Authorizer"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "roadsideunit-api-authorizer"
+            Type: "REQUEST"
+            AuthType: "custom"
+            AuthorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:roadsideunit-api-authorization:${stageVariables.alias}/invocations"
+            IdentitySource: "method.request.header.Authorization,method.request.header.apiKey"
+            AuthorizerResultTtlInSeconds: 0
+
+    ApiGatewayModel:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "ServiceLocationInfo"
+            Description: "サービス地点情報"
+            Schema: |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "serviceLocationInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "serviceLocationID",
+                                "latitude",
+                                "longitude",
+                                "elevation",
+                                "approachAttributeSize",
+                                "approachAttributeInfo",
+                                "roadsideUnitList"
+                            ],
+                            "properties": {
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "latitude": {
+                                    "type": "integer",
+                                    "minimum": -2147483648,
+                                    "maximum": 900000000
+                                },
+                                "longitude": {
+                                    "type": "integer",
+                                    "minimum": -2147483648,
+                                    "maximum": 1800000000
+                                },
+                                "elevation": {
+                                    "type": "integer",
+                                    "minimum": -4095,
+                                    "maximum": 61440
+                                },
+                                "approachAttributeSize": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 15
+                                },
+                                "approachAttributeInfo": {
+                                    "type": "array",
+                                    "minItems": 0,
+                                    "maxItems": 15,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "approachID",
+                                            "approachHeading"
+                                        ],
+                                        "properties": {
+                                            "approachID": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 15
+                                            },
+                                            "approachHeading": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 239
+                                            }
+                                        }
+                                    }
+                                },
+                                "roadsideUnitList": {
+                                    "type": "array",
+                                    "minItems": 0,
+                                    "maxItems": 15,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "roadsideUnitID",
+                                            "roadsideUnitClassification"
+                                        ],
+                                        "properties": {
+                                            "roadsideUnitID": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 4294967295
+                                            },
+                                            "roadsideUnitClassification": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 7
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel2:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "SignalInfo"
+            Description: "信号情報"
+            Schema: |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "signalInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "serviceLocationID",
+                                "roadsideUnitID",
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "prefectureID",
+                                "roadType",
+                                "intersectionID"
+                            ],
+                            "properties": {
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "roadsideUnitID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "prefectureID": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 47
+                                },
+                                "roadType": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "intersectionID": {
+                                    "type": "integer",
+                                    "minLength": 1,
+                                    "maxLength": 32767
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel3:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "SensorInfo"
+            Description: "センサ情報"
+            Schema: |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "sensorInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "serviceLocationID",
+                                "roadsideUnitID",
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "sensorNum",
+                                "sensorAttributeInfo"
+                            ],
+                            "properties": {
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "roadsideUnitID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "sensorNum": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 16
+                                },
+                                "sensorAttributeInfo": {
+                                    "type": "array",
+                                    "minItems": 0,
+                                    "maxItems": 16,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "deviceID",
+                                            "latitude",
+                                            "longitude",
+                                            "elevation",
+                                            "sensorDetectionRanges"
+                                        ],
+                                        "properties": {
+                                            "deviceID": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 16777215
+                                            },
+                                            "latitude": {
+                                                "type": "integer",
+                                                "minimum": -2147483648,
+                                                "maximum": 900000000
+                                            },
+                                            "longitude": {
+                                                "type": "integer",
+                                                "minimum": -2147483648,
+                                                "maximum": 1800000000
+                                            },
+                                            "elevation": {
+                                                "type": "integer",
+                                                "minimum": -4095,
+                                                "maximum": 61440
+                                            },
+                                            "sensorDetectionRanges": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 16
+                                            },
+                                            "sensorDetectionRangeInfo": {
+                                                "type": "array",
+                                                "minItems": 1,
+                                                "maxItems": 16,
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "detectionRangeID",
+                                                        "vertices",
+                                                        "verticesPos",
+                                                        "detectableObjectType",
+                                                        "detectionReliability",
+                                                        "detectionLimitObjectSize"
+                                                    ],
+                                                    "properties": {
+                                                        "detectionRangeID": {
+                                                            "type": "integer",
+                                                            "minimum": 1,
+                                                            "maximum": 16
+                                                        },
+                                                        "undetectableRate": {
+                                                            "type": "integer",
+                                                            "minimum": 1,
+                                                            "maximum": 255
+                                                        },
+                                                        "vertices": {
+                                                            "type": "integer",
+                                                            "minimum": 1,
+                                                            "maximum": 16
+                                                        },
+                                                        "verticesPos": {
+                                                            "type": "array",
+                                                            "minItems": 1,
+                                                            "maxItems": 16,
+                                                            "items": {
+                                                                "type": "object",
+                                                                "required": [
+                                                                    "verticesLat",
+                                                                    "verticesLon"
+                                                                ],
+                                                                "properties": {
+                                                                    "verticesLat": {
+                                                                        "type": "integer",
+                                                                        "minimum": -2147483648,
+                                                                        "maximum": 900000000
+                                                                    },
+                                                                    "verticesLon": {
+                                                                        "type": "integer",
+                                                                        "minimum": -2147483648,
+                                                                        "maximum": 1800000000
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "detectableObjectType": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "detectionReliability": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 101
+                                                        },
+                                                        "detectionLimitObjectSize": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 65535
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel4:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "CommunicationMediaInfo"
+            Description: "通信メディア情報"
+            Schema: |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "communicationMediaInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "serviceLocationID",
+                                "roadsideUnitID",
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "communicationMediaNum",
+                                "communicationMediaIDs"
+                            ],
+                            "properties": {
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "roadsideUnitID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "communicationMediaNum": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 16
+                                },
+                                "communicationMediaIDs": {
+                                    "type": "array",
+                                    "minItems": 0,
+                                    "maxItems": 16,
+                                    "items": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 16777215
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel5:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "AliveMonitoringInfo"
+            Description: "死活監視情報"
+            Schema: |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "aliveMonitoringInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "serviceLocationID",
+                                "roadsideUnitID",
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "operationClassificationCode",
+                                "serviceAvailability",
+                                "deviceClassificationNum",
+                                "deviceClassificationAliveInfo"
+                            ],
+                            "properties": {
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "roadsideUnitID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "operationClassificationCode": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "serviceAvailability": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 2
+                                },
+                                "deviceClassificationNum": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 15
+                                },
+                                "deviceClassificationAliveInfo": {
+                                    "type": "array",
+                                    "minItems": 0,
+                                    "maxItems": 15,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "deviceClassification",
+                                            "deviceNum",
+                                            "deviceAliveInfo"
+                                        ],
+                                        "properties": {
+                                            "deviceClassification": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 2
+                                            },
+                                            "deviceNum": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 15
+                                            },
+                                            "deviceAliveInfo": {
+                                                "type": "array",
+                                                "minItems": 0,
+                                                "maxItems": 15,
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "deviceID",
+                                                        "deviceOperationStatus",
+                                                        "deviceAliveStatus"
+                                                    ],
+                                                    "properties": {
+                                                        "deviceID": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 16777215
+                                                        },
+                                                        "deviceOperationStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 1
+                                                        },
+                                                        "deviceAliveStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 2
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel6:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "Error"
+            Description: "This is a default error schema model"
+            Schema: |
+                {
+                  "$schema" : "http://json-schema.org/draft-04/schema#",
+                  "title" : "Error Schema",
+                  "type" : "object",
+                  "properties" : {
+                    "message" : { "type" : "string" }
+                  }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel7:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "RoadsideUnitInfo"
+            Description: "路側機属性情報"
+            Schema: !Sub |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "RoadsideUnitInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "serviceLocationID",
+                                "roadsideUnitID",
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "roadsideUnitName",
+                                "${ApiGatewayStage}uctNumber",
+                                "licensingInfo",
+                                "initialRegistrationDate",
+                                "powerConsumption",
+                                "grossWeight",
+                                "materialType",
+                                "dateOfInstallation",
+                                "latitude",
+                                "longitude",
+                                "roadsideUnitManager",
+                                "installationSiteManager",
+                                "lastInspectionDate",
+                                "nextInspectionDate"
+                            ],
+                            "properties": {
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "roadsideUnitID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "roadsideUnitName": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                },
+                                "${ApiGatewayStage}uctNumber": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                },
+                                "manufacturer": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                },
+                                "customer": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                },
+                                "licensingInfo": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                },
+                                "initialRegistrationDate": {
+                                    "type": "string"
+                                },
+                                "powerConsumption": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "grossWeight": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "materialType": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 15
+                                },
+                                "dateOfInstallation": {
+                                    "type": "string"
+                                },
+                                "latitude": {
+                                    "type": "integer",
+                                    "minimum": -2147483648,
+                                    "maximum": 900000000
+                                },
+                                "longitude": {
+                                    "type": "integer",
+                                    "minimum": -2147483648,
+                                    "maximum": 1800000000
+                                },
+                                "roadsideUnitManager": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                },
+                                "installationSiteManager": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                },
+                                "lastInspectionDate": {
+                                    "type": "string"
+                                },
+                                "nextInspectionDate": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel8:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "Empty"
+            Description: "This is a default empty schema model"
+            Schema: |
+                {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title" : "Empty Schema",
+                  "type" : "object"
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel9:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "UseCaseInfo"
+            Description: "ユースケース情報"
+            Schema: |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "useCaseInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "serviceLocationID",
+                                "roadsideUnitID",
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "useCaseInfo"
+                            ],
+                            "properties": {
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "roadsideUnitID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "useCaseInfo": {
+                                    "type": "array",
+                                    "minItems": 0,
+                                    "maxItems": 255,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "useCaseNum",
+                                            "useCaseClassificationInfo"
+                                        ],
+                                        "properties": {
+                                            "useCaseNum": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 255
+                                            },
+                                            "useCaseClassificationInfo": {
+                                                "type": "array",
+                                                "minItems": 0,
+                                                "maxItems": 255,
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "useCaseType",
+                                                        "targetUtilizationType"
+                                                    ],
+                                                    "properties": {
+                                                        "useCaseType": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "useCaseSupplementaryCode": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "targetUtilizationType": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "targetDirection": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 65534
+                                                        },
+                                                        "targetSensorNumber": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 65535
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel10:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi2
+            Name: "TargetInfo"
+            Description: "物標情報"
+            Schema: !Sub |
+                {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "targetInfo",
+                    "type": "object",
+                    "required": [
+                        "attribute"
+                    ],
+                    "properties": {
+                        "dataModelType": {
+                            "type": "string",
+                            "enum": [
+                                "test1",
+                                "test2"
+                            ]
+                        },
+                        "attribute": {
+                            "type": "object",
+                            "required": [
+                                "serviceLocationID",
+                                "roadsideUnitID",
+                                "updateTimeInfo",
+                                "formatVersion",
+                                "deviceNum",
+                                "deviceIndividualInfo"
+                            ],
+                            "properties": {
+                                "serviceLocationID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "roadsideUnitID": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 4294967295
+                                },
+                                "updateTimeInfo": {
+                                    "type": "string"
+                                },
+                                "formatVersion": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "deviceNum": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 16
+                                },
+                                "deviceIndividualInfo": {
+                                    "type": "array",
+                                    "minItems": 0,
+                                    "maxItems": 16,
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "deviceID",
+                                            "targetNum",
+                                            "targetIndividualInfo"
+                                        ],
+                                        "properties": {
+                                            "deviceID": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 16777215
+                                            },
+                                            "targetNum": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 65535
+                                            },
+                                            "targetIndividualInfo": {
+                                                "type": "array",
+                                                "minItems": 0,
+                                                "maxItems": 65535,
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "commonServiceStandardID",
+                                                        "targetMessageID",
+                                                        "targetIndividualVersionInfo",
+                                                        "targetID",
+                                                        "targetIndividualIncrementCounter",
+                                                        "dataLength",
+                                                        "individualOptionFlag",
+                                                        "leapSecondCorrectionInfo",
+                                                        "time",
+                                                        "latitude",
+                                                        "longitude",
+                                                        "elevation",
+                                                        "positionConf",
+                                                        "elevationConf",
+                                                        "speed",
+                                                        "heading",
+                                                        "acceleration",
+                                                        "speedConf",
+                                                        "headingConf",
+                                                        "forwardRearAccelerationConf",
+                                                        "transmissionState",
+                                                        "steeringWheelAngle",
+                                                        "sizeClassification",
+                                                        "roleClassification",
+                                                        "vehicleWidth",
+                                                        "vehicleLength"
+                                                    ],
+                                                    "properties": {
+                                                        "commonServiceStandardID": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "targetMessageID": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "targetIndividualVersionInfo": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "targetID": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 4294967295
+                                                        },
+                                                        "targetIndividualIncrementCounter": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "dataLength": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "individualOptionFlag": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "leapSecondCorrectionInfo": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "time": {
+                                                            "type": "string"
+                                                        },
+                                                        "latitude": {
+                                                            "type": "integer",
+                                                            "minimum": -2147483648,
+                                                            "maximum": 900000000
+                                                        },
+                                                        "longitude": {
+                                                            "type": "integer",
+                                                            "minimum": -2147483648,
+                                                            "maximum": 1800000000
+                                                        },
+                                                        "elevation": {
+                                                            "type": "integer",
+                                                            "minimum": -4095,
+                                                            "maximum": 61440
+                                                        },
+                                                        "positionConf": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 15
+                                                        },
+                                                        "elevationConf": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 15
+                                                        },
+                                                        "speed": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 65535
+                                                        },
+                                                        "heading": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 65535
+                                                        },
+                                                        "acceleration": {
+                                                            "type": "integer",
+                                                            "minimum": -32768,
+                                                            "maximum": 2000
+                                                        },
+                                                        "speedConf": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "headingConf": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "forwardRearAccelerationConf": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "transmissionState": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "steeringWheelAngle": {
+                                                            "type": "integer",
+                                                            "minimum": -2048,
+                                                            "maximum": 2047
+                                                        },
+                                                        "sizeClassification": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 15
+                                                        },
+                                                        "roleClassification": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 15
+                                                        },
+                                                        "vehicleWidth": {
+                                                            "type": "integer",
+                                                            "minimum": 1,
+                                                            "maximum": 1023
+                                                        },
+                                                        "vehicleLength": {
+                                                            "type": "integer",
+                                                            "minimum": 1,
+                                                            "maximum": 16383
+                                                        },
+                                                        "positionDelay": {
+                                                            "type": "integer",
+                                                            "minimum": 1,
+                                                            "maximum": 31
+                                                        },
+                                                        "revisionCounter": {
+                                                            "type": "integer",
+                                                            "minimum": 1,
+                                                            "maximum": 31
+                                                        },
+                                                        "roadFacilities": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "roadClassification": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "semiMajorAxisOfPositional${ApiGatewayModel6}Ellipse": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "semiMinorAxisOfPositional${ApiGatewayModel6}Ellipse": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "semiMajorAxisOrientationOfPositional${ApiGatewayModel6}Ellipse": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 65535
+                                                        },
+                                                        "GPSPositioningMode": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "GPSPDOP": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 63
+                                                        },
+                                                        "numberOfGPSSatellitesInUse": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 15
+                                                        },
+                                                        "GPSMultiPathDetection": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "deadReckoningAvailability": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "mapMatchingAvailability": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "yawRate": {
+                                                            "type": "integer",
+                                                            "minimum": -32768,
+                                                            "maximum": 32767
+                                                        },
+                                                        "brakeAppliedStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 63
+                                                        },
+                                                        "auxiliaryBrakeAppliedStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "throttlePosition": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "exteriorLights": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "adaptiveCruiseControlStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "cooperativeAdaptiveCruiseControlStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "preCrashSafetyStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "antilockBrakeStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "tractionControlStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "electronicStabilityControlStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "laneKeepingAssistStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "laneDepartureWarningStatus": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "intersectionDistanceInformationAvailability": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "intersectionDistance": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 1023
+                                                        },
+                                                        "intersectionPositionInformationAvailability": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 7
+                                                        },
+                                                        "intersectionLatitude": {
+                                                            "type": "integer",
+                                                            "minimum": -2147483648,
+                                                            "maximum": 900000000
+                                                        },
+                                                        "intersectionLongitude": {
+                                                            "type": "integer",
+                                                            "minimum": -2147483648,
+                                                            "maximum": 1800000000
+                                                        },
+                                                        "extendedInformation": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 255
+                                                        },
+                                                        "targetIndividualExtendedData": {
+                                                            "type": "string",
+                                                            "minLength": 0,
+                                                            "maxLength": 1000
+                                                        },
+                                                        "restingState": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 3602
+                                                        },
+                                                        "existingTime": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "maximum": 36001
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ContentType: "application/json"
+

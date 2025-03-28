@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+    Generator: "former2"
+Description: ""
+Resources:
+    ElastiCacheCacheCluster:
+        Type: "AWS::ElastiCache::CacheCluster"
+        Properties:
+            CacheNodeType: "cache.t3.micro"
+            Engine: "redis"
+            EngineVersion: "7.1.0"
+            NumCacheNodes: 1
+            PreferredAvailabilityZone: !Sub "${AWS::Region}"
+            PreferredMaintenanceWindow: "fri:14:30-fri:15:30"
+            CacheParameterGroupName: "default.redis7"
+            CacheSubnetGroupName: "roadsideunit-cache-subnetgroup"
+            AutoMinorVersionUpgrade: false
+            SnapshotRetentionLimit: 0
+            SnapshotWindow: "19:00-20:00"
+            ClusterName: "roadsideunit-cache-001"
+

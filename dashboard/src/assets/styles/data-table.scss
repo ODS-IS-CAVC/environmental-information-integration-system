@@ -1,0 +1,32 @@
+.v-data-table {
+  :deep(th) {
+    background: rgb(var(--v-theme-primary));
+    color: white;
+    white-space: nowrap;
+    &:first-child {
+      position: sticky !important;
+      left: 0;
+      z-index: 1;
+      width: 150px;
+    }
+  }
+  :deep(tr) {
+    background: rgb(var(--v-theme-evenRow));
+    white-space: nowrap;
+    &:nth-child(odd) {
+      background: rgb(var(--v-theme-oddRow));
+      td:first-child {
+        background: rgb(var(--v-theme-oddRow));
+      }
+    }
+    td {
+      z-index: 0;
+      &:first-child {
+        position: sticky !important;
+        left: 0;
+        z-index: 1;
+        background: rgb(var(--v-theme-evenRow)); 
+      }
+    }
+  }
+}
